@@ -12,5 +12,5 @@ Evolves over time.
 
 You may use it if you want.
 
-**( If you see this from other projects, don't use it directly. )**
+**( If you see this in other projects, don't use it directly. )**
 
