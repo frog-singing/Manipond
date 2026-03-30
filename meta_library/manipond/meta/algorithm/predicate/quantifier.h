@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include <manipond/meta/constraint/construct.h> //用于 meta::constructible_to
 #include <concepts> //用于 std::derived_from, std::integral，C++20标准
 #include <cstddef> //用于 std::size_t
 
