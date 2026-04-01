@@ -4,8 +4,6 @@
 
 #pragma once
 #include <manipond/meta/wrapper/list.h>
-#include <manipond/meta/wrapper/list/type_list.h>
-#include <manipond/meta/wrapper/list/value_list.h>
 
 
 //演化塘::元工具
