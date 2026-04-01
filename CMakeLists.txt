@@ -39,6 +39,28 @@ else()
 endif()
 
 
+if(TARGET manipond::exosuit_runtime)
+	message(STATUS "[Manipond] Using existing manipond::exosuit_runtime target.")
+else()
+    # 定义一个静态库 exosuit runtime
+    add_library(manipond_exosuit_runtime STATIC exosuit_library/manipond/library_placeholder.cpp)
+
+    # 设置一个库别名
+	add_library(manipond::exosuit_runtime ALIAS manipond_exosuit_runtime)
+
+    # 为当前库设置包含路径，并且任何链接此库的目标都将自动获得此路径
+    target_include_directories(manipond_exosuit_runtime PUBLIC
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/exosuit_library>
+		$<INSTALL_INTERFACE:include>
+    )
+    
+    # 链接本仓库中的 exosuit 库
+	target_link_libraries(manipond_exosuit_runtime PUBLIC manipond::exosuit)
+
+    message(STATUS "[Manipond] Created manipond::exosuit_runtime target.")
+endif()
+
+
 if(TARGET manipond::meta)
 	message(STATUS "[Manipond] Using existing manipond::meta target.")
 else()
@@ -65,6 +87,9 @@ else()
         "${CMAKE_CURRENT_SOURCE_DIR}/meta_library/manipond/meta.h"
     )
 
+    # 链接本仓库中的 exosuit 库
+	target_link_libraries(manipond_meta INTERFACE manipond::exosuit)
+
     message(STATUS "[Manipond] Created manipond::meta target.")
 endif()
 
@@ -80,8 +105,10 @@ if(PROJECT_IS_TOP_LEVEL)
         add_executable(${test_name} ${test_file})
 
         # 链接到当前仓库的库
-        target_link_libraries(${test_name} PRIVATE manipond::exosuit)
-        target_link_libraries(${test_name} PRIVATE manipond::meta)
+        target_link_libraries(${test_name} PRIVATE
+            manipond::meta
+            anipond::exosuit_runtime
+        )
 
         add_test(NAME ${test_name} COMMAND ${test_name})
     endforeach()

@@ -5,7 +5,7 @@
 #pragma once
 #include "tag.h"
 #include "indexed_type.h"
-#include <manipond/meta/util.h> //用于 meta::dependent_false_v
+#include <manipond/exosuit/error/dependent_false.h>
 #include <cstddef> //用于 std::size_t
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <concepts> //用于 std::derived_from，C++20标准
@@ -109,7 +109,7 @@ namespace manipond::meta::list
 	template<typename List>
 	struct as_type_list_impl
 	{
-		static_assert(meta::dependent_false_v<List>,
+		static_assert(exosuit::dependent_false_v<List>,
 			"[manipond::meta] Unsupported list type. Please use type_list to construct your list.");
 	};
 
