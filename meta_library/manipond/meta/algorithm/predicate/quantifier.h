@@ -132,30 +132,6 @@ namespace manipond::meta::predicate::quantifier
 	};
 
 	template<std::size_t Threshold>
-	struct at_least_impl : quantifier_tag
-	{
-		using type = at_least_impl;
-
-		static constexpr bool call(constructible_to<bool> auto... condition)
-		{
-			return (static_cast<std::size_t>(condition) + ...) >= Threshold;
-		}
-
-		struct solver
-		{
-			std::size_t count{ 0 };
-
-			solver() = default; //显式声明默认构造函数，禁用聚合初始化
-
-			constexpr bool solved() const noexcept { return count >= Threshold; }
-			constexpr bool result() const noexcept { return count >= Threshold; }
-
-			constexpr void step(bool condition) noexcept
-			{ count += static_cast<std::size_t>(condition); }
-		};
-	};
-	
-	template<std::size_t Threshold>
 	struct at_most_impl : quantifier_tag
 	{
 		using type = at_most_impl;
@@ -178,28 +154,51 @@ namespace manipond::meta::predicate::quantifier
 			{ count += static_cast<std::size_t>(condition); }
 		};
 	};
-	
+
+	template<std::size_t Threshold>
+	struct more_than_impl : quantifier_tag
+	{
+		using type = more_than_impl;
+
+		static constexpr bool call(constructible_to<bool> auto... condition)
+		{
+			return (static_cast<std::size_t>(condition) + ...) > Threshold;
+		}
+
+		struct solver
+		{
+			std::size_t count{ 0 };
+
+			solver() = default; //显式声明默认构造函数，禁用聚合初始化
+
+			constexpr bool solved() const noexcept { return count > Threshold; }
+			constexpr bool result() const noexcept { return count > Threshold; }
+
+			constexpr void step(bool condition) noexcept
+			{ count += static_cast<std::size_t>(condition); }
+		};
+	};
+
 	template<> struct exactly_impl<0>	{ using type = none_of; };
-	template<> struct at_least_impl<0>	{ using type = always_true; };
-	template<> struct at_least_impl<1>	{ using type = any_of; };
 	template<> struct at_most_impl<0>	{ using type = none_of; };
+	template<> struct more_than_impl<0>	{ using type = any_of; };
 
 
 	template<std::integral auto N> requires (N >= 0)
 	using exactly = typename exactly_impl<static_cast<std::size_t>(N)>::type;
 
 	template<std::integral auto N> requires (N >= 0)
-	using at_least = typename at_least_impl<static_cast<std::size_t>(N)>::type;
+	using at_most = typename at_most_impl<static_cast<std::size_t>(N)>::type;
 
 	template<std::integral auto N> requires (N >= 0)
-	using at_most = typename at_most_impl<static_cast<std::size_t>(N)>::type;
+	using more_than = typename more_than_impl<static_cast<std::size_t>(N)>::type;
 
 	//--------------------------------------------------------------------------------
 
 	template<std::size_t Threshold>
-	struct more_than_impl
+	struct at_least_impl
 	{
-		using type = at_least<Threshold + 1>;
+		using type = more_than<Threshold - 1>;
 	};
 
 	template<std::size_t Threshold>
@@ -208,13 +207,14 @@ namespace manipond::meta::predicate::quantifier
 		using type = at_most<Threshold - 1>;
 	};
 
-	template<> struct less_than_impl<0> { using type = always_false; };
+	template<> struct at_least_impl<0>	{ using type = always_true; };
+	template<> struct less_than_impl<0>	{ using type = always_false; };
 
 
 	template<std::integral auto N> requires (N >= 0)
-	using more_than = typename more_than_impl<static_cast<std::size_t>(N)>::type;
+	using at_least = typename at_least_impl<static_cast<std::size_t>(N)>::type;
 
-	template <std::integral auto N> requires (N >= 0)
+	template<std::integral auto N> requires (N >= 0)
 	using less_than = typename less_than_impl<static_cast<std::size_t>(N)>::type;
 
 }
