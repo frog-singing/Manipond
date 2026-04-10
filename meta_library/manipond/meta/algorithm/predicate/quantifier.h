@@ -24,25 +24,25 @@ namespace manipond::meta::predicate::quantifier
 
 	struct always_true : quantifier_tag
 	{
-		static constexpr bool call(constructible_to<bool> auto... condition) { return true; }
+		static constexpr bool solve(constructible_to<bool> auto... condition) { return true; }
 
 		struct solver
 		{
 			constexpr bool solved() const noexcept { return true; }
 			constexpr bool result() const noexcept { return true; }
-			constexpr void step(bool condition) noexcept {}
+			constexpr void step(bool) noexcept {}
 		};
 	};
 
 	struct always_false : quantifier_tag
 	{
-		static constexpr bool call(constructible_to<bool> auto... condition) { return false; }
+		static constexpr bool solve(constructible_to<bool> auto... condition) { return false; }
 
 		struct solver
 		{
 			constexpr bool solved() const noexcept { return true; }
 			constexpr bool result() const noexcept { return false; }
-			constexpr void step(bool condition) noexcept {}
+			constexpr void step(bool) noexcept {}
 		};
 	};
 
@@ -50,7 +50,7 @@ namespace manipond::meta::predicate::quantifier
 
 	struct all_of : quantifier_tag
 	{
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return (condition && ...);
 		}
@@ -69,7 +69,7 @@ namespace manipond::meta::predicate::quantifier
 
 	struct any_of : quantifier_tag
 	{
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return (condition || ...);
 		}
@@ -88,7 +88,7 @@ namespace manipond::meta::predicate::quantifier
 
 	struct none_of : quantifier_tag
 	{
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return !(condition || ...);
 		}
@@ -112,7 +112,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		using type = exactly_impl;
 
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return (static_cast<std::size_t>(condition) + ...) == Target;
 		}
@@ -136,7 +136,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		using type = at_most_impl;
 
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return (static_cast<std::size_t>(condition) + ...) <= Threshold;
 		}
@@ -160,7 +160,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		using type = more_than_impl;
 
-		static constexpr bool call(constructible_to<bool> auto... condition)
+		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
 			return (static_cast<std::size_t>(condition) + ...) > Threshold;
 		}
@@ -225,18 +225,18 @@ namespace manipond::meta::predicate
 {
 	using quantifier::Quantifier;
 
-	using quantifier::always_true;
-	using quantifier::always_false;
+	using quantifier::always_true;	// ⊤
+	using quantifier::always_false;	// ⊥
 
-	using quantifier::all_of;
-	using quantifier::any_of;
-	using quantifier::none_of;
+	using quantifier::all_of;		// ∀
+	using quantifier::any_of;		// ∃
+	using quantifier::none_of;		// ¬∃
 
-	using quantifier::exactly;
-	using quantifier::at_least;
-	using quantifier::at_most;
+	using quantifier::exactly;		// =
+	using quantifier::at_least;		// ≥
+	using quantifier::at_most;		// ≤
 
-	using quantifier::more_than;
-	using quantifier::less_than;
+	using quantifier::more_than;	// >
+	using quantifier::less_than;	// <
 
 }

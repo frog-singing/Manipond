@@ -9,7 +9,7 @@
 //演化塘::元工具
 namespace manipond::meta
 {
-	//类型映射::列表 trait::list================================================================================
+	//元映射::列表 trait::list================================================================================
 
 	template<typewise::List List>
 	using head_t = typename list::type_list_trait<List>::head;

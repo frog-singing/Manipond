@@ -11,6 +11,10 @@ namespace manipond::exosuit
 {
 	//前面的区域 area ahead================================================================================
 
+	inline constexpr const char* work_in_progress_message =
+		"[WIP] How about we explore the area ahead of us later? "
+		"前面的区域以后再来探索吧？";
+
 	template<typename... Type>
 	struct area_ahead
 	{
@@ -22,7 +26,7 @@ namespace manipond::exosuit
 	template<typename... Type>
 	consteval void explore_later()
 	{
-		static_assert(dependent_false_v<Type...>,
+		static_assert(dependent_false_v<Type...>, 
 			"[WIP] How about we explore the area ahead of us later? "
 			"前面的区域以后再来探索吧？");
 	}

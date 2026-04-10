@@ -50,7 +50,7 @@ namespace manipond::meta::list
 	public:
 		//下标访问元素
 		template<std::size_t Index>
-			requires (Index < size)
+			requires (Index < sizeof...(Value)) //不能用静态成员变量 size，因为此时 value_list 还没有实例化
 		static constexpr auto element = decltype(resolve_value<Index>(value_table{}))::value;
 
 		//值列表重包装

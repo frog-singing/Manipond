@@ -6,4 +6,5 @@
 
 //包装器 wrapper
 //聚合头文件
+#include "wrapper/element.h"
 #include "wrapper/list.h"

@@ -4,6 +4,6 @@
 
 #pragma once
 
-//类型映射 trait
+//元映射 trait
 //聚合头文件
 #include "trait/list.h"

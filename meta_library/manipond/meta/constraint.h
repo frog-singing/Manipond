@@ -6,6 +6,7 @@
 
 //约束 constraint
 //聚合头文件
+#include "constraint/equivalence.h"
 #include "constraint/construct.h"
 
 #include "constraint/container.h"
