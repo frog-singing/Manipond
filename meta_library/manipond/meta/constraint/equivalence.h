@@ -33,9 +33,12 @@ namespace manipond::meta::typewise
 namespace manipond::meta::valuewise
 {
 	// ≡
+	//在 C++ 的实现中表现不稳定
+	//在 C++17 之前表现为 “内存地址一致” 或 “实体一致”
+	//从 C++20 开始表现为 “字面值一致” 或 “结构化相等”
 	template<auto V1, auto V2>
 	concept same_as = identical::is_same_value_v<V1, V2> && identical::is_same_value_v<V2, V1>;
-
+	
 	// =
 	template<auto V1, auto V2>
 	concept equal_to =

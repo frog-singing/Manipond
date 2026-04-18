@@ -12,6 +12,6 @@ namespace manipond::exosuit
 
 	//模板依赖静态断言组件，用于报错
 	template<typename...>
-	inline constexpr bool dependent_false_v = false;
+	inline constexpr bool dependent_false_v{ false };
 
 }

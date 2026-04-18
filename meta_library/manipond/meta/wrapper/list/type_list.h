@@ -36,28 +36,6 @@ namespace manipond::meta::list
 		static constexpr std::size_t size{ sizeof...(Type) };
 		static constexpr bool empty{ !size };
 
-		/*
-		//头参数
-		using head = typename decltype
-		(
-			[]<typename Head, typename... Tail>
-			requires (sizeof...(Type) > 0)
-			(type_list<Head, Tail...>*) -> std::type_identity<Head>
-			{ return {}; }
-			(static_cast<type_list*>(nullptr))
-		)::type;
-
-		//尾参数包列表
-		using tail_list = typename decltype
-		(
-			[]<typename Head, typename... Tail>
-			requires (sizeof...(Type) > 0)
-			(type_list<Head, Tail...>*) -> std::type_identity<type_list<Tail...>>
-			{ return {}; }
-			(static_cast<type_list*>(nullptr))
-		)::type;
-		*/
-
 		//头参数
 		using head = typename type_list_trait<type_list>::head;
 
