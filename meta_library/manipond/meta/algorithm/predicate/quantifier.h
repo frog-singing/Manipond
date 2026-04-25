@@ -105,6 +105,25 @@ namespace manipond::meta::predicate::quantifier
 		};
 	};
 
+	struct not_every : quantifier_tag
+	{
+		static constexpr bool solve(constructible_to<bool> auto... condition)
+		{
+			return !(condition && ...);
+		}
+
+		struct solver
+		{
+			bool state{ false };
+
+			solver() = default; //显式声明默认构造函数，禁用聚合初始化
+
+			constexpr bool solved() const noexcept { return state; }
+			constexpr bool result() const noexcept { return state; }
+			constexpr void step(bool condition) noexcept { state |= !condition; }
+		};
+	};
+
 	//--------------------------------------------------------------------------------
 
 	template<std::size_t Target>
@@ -231,7 +250,8 @@ namespace manipond::meta::predicate
 	using quantifier::all_of;		// ∀
 	using quantifier::any_of;		// ∃
 	using quantifier::none_of;		// ¬∃
-
+	using quantifier::not_every;	// ¬∀
+	
 	using quantifier::exactly;		// =
 	using quantifier::at_least;		// ≥
 	using quantifier::at_most;		// ≤
