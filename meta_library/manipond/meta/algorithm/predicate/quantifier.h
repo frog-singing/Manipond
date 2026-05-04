@@ -24,7 +24,7 @@ namespace manipond::meta::predicate::quantifier
 
 	struct always_true : quantifier_tag
 	{
-		static constexpr bool solve(constructible_to<bool> auto... condition) { return true; }
+		static constexpr bool solve(constructible_to<bool> auto...) { return true; }
 
 		struct solver
 		{
@@ -36,7 +36,7 @@ namespace manipond::meta::predicate::quantifier
 
 	struct always_false : quantifier_tag
 	{
-		static constexpr bool solve(constructible_to<bool> auto... condition) { return false; }
+		static constexpr bool solve(constructible_to<bool> auto...) { return false; }
 
 		struct solver
 		{

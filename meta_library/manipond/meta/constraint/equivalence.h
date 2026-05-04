@@ -43,8 +43,10 @@ namespace manipond::meta::valuewise
 	template<auto V1, auto V2>
 	concept equal_to =
 		(requires { requires V1 == V2; }) ||
-		typewise::same_as<decltype(V1), decltype(V2)> &&
-		(std::is_empty_v<decltype(V1)> || valuewise::same_as<V1, V2>);
+		(
+			typewise::same_as<decltype(V1), decltype(V2)> &&
+			(std::is_empty_v<decltype(V1)> || valuewise::same_as<V1, V2>)
+		);
 
 	/*
 	* equal_to 中的等价关系必须满足：
