@@ -10,7 +10,8 @@
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <variant> //用于 std::monostate
 #include <concepts> //用于 std::derived_from，C++20标准
-#include <type_traits> //用于 std::false_type, std::true_type
+#include <type_traits> //用于 std::false_type, std::true_type, std::integral_constant
+#include <tuple> //用于 std::tuple_size, std::tuple_element
 
 
 namespace manipond::meta::list
@@ -52,6 +53,10 @@ namespace manipond::meta::list
 		template<std::size_t Index>
 			requires (Index < sizeof...(Value)) //不能用静态成员变量 size，因为此时 value_list 还没有实例化
 		static constexpr auto element = decltype(resolve_value<Index>(value_table{}))::value;
+
+		//下标访问元素的函数版本
+		template<std::size_t Index>
+		static constexpr auto get() noexcept { return element<Index>; }
 
 		//值列表重包装
 		template<template<auto...> typename Wrapper>
@@ -122,5 +127,44 @@ namespace manipond::meta::list
 	concept ValueListLike =
 		std::derived_from<List, value_list_tag> ||
 		is_value_list_like<List>::value;
+
+	//值列表的 get 函数重载，用于 tuple-like 访问
+	template<std::size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> const&) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
+
+	template<std::size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> &) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
+
+	template<std::size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> &&) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
+
+}
+
+
+namespace std
+{
+	//值列表的 tuple_size 和 tuple_element 特化，用于 tuple-like 访问
+	template<auto... Value>
+	struct tuple_size<manipond::meta::list::value_list<Value...>>
+		: integral_constant<size_t, sizeof...(Value)> {};
+
+	template<size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	struct tuple_element<Index, manipond::meta::list::value_list<Value...>>
+	{
+		using type = decltype(manipond::meta::list::value_list<Value...>::template element<Index>);
+	};
 
 }
