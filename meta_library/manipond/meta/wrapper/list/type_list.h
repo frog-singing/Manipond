@@ -9,7 +9,7 @@
 #include <cstddef> //用于 std::size_t
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <concepts> //用于 std::derived_from，C++20标准
-#include <type_traits> //用于 std::false_type, std::true_type, std::type_identity（C++20标准）
+#include <type_traits> //用于 std::remove_cvref_t, std::false_type, std::true_type
 
 
 namespace manipond::meta::list
@@ -26,7 +26,7 @@ namespace manipond::meta::list
 //演化塘::元工具::列表
 namespace manipond::meta::list
 {
-	//包装器::类型列表 wrapper::type_list================================================================================
+	//包装器::类型列表 wrapper::type list================================================================================
 
 	//类型列表
 	//如果要使用递归展开，则不要存储void类型，因为空类型列表的head是void类型
@@ -75,12 +75,51 @@ namespace manipond::meta::list
 		using head = void;
 		using tail_list = type_list<>;
 	};
-	
+
+	template<template<typename...> typename Wrapper>
+	struct type_list_trait<const Wrapper<>> : type_list_trait<Wrapper<>>
+	{
+		using tail_list = const type_list<>;
+	};
+
+	template<template<typename...> typename Wrapper>
+	struct type_list_trait<volatile Wrapper<>> : type_list_trait<Wrapper<>>
+	{
+		using tail_list = volatile type_list<>;
+	};
+
+	template<template<typename...> typename Wrapper>
+	struct type_list_trait<const volatile Wrapper<>> : type_list_trait<Wrapper<>>
+	{
+		using tail_list = const volatile type_list<>;
+	};	
+
 	template<template<typename...> typename Wrapper, typename Head, typename... Tail>
 	struct type_list_trait<Wrapper<Head, Tail...>>
 	{
 		using head = Head;
 		using tail_list = type_list<Tail...>;
+	};
+
+	template<template<typename...> typename Wrapper, typename Head, typename... Tail>
+	struct type_list_trait<const Wrapper<Head, Tail...>>
+	{
+		using head = const Head;
+		using tail_list = const type_list<Tail...>;
+	};
+
+	template<template<typename...> typename Wrapper, typename Head, typename... Tail>
+	struct type_list_trait<volatile Wrapper<Head, Tail...>>
+	{
+		using head = volatile Head;
+		using tail_list = volatile type_list<Tail...>;
+	};
+
+	template<template<typename...> typename Wrapper, typename Head, typename... Tail>
+	struct type_list_trait<const volatile Wrapper<Head, Tail...>>
+	{
+		using head = const volatile Head;
+		using tail_list = const volatile type_list<Tail...>;
 	};
 
 	//类型列表适配器，将任意类型包装器适配为类型列表
@@ -106,7 +145,7 @@ namespace manipond::meta::list
 	};
 
 	template<typename List>
-	using as_type_list = typename as_type_list_impl<List>::type;
+	using as_type_list = typename as_type_list_impl<std::remove_cvref_t<List>>::type;
 
 	//类型列表约束
 	template<typename List>
@@ -117,7 +156,7 @@ namespace manipond::meta::list
 
 	template<typename List>
 	concept TypeListLike =
-		std::derived_from<List, type_list_tag> ||
-		is_type_list_like<List>::value;
+		std::derived_from<std::remove_cvref_t<List>, type_list_tag> ||
+		is_type_list_like<std::remove_cvref_t<List>>::value;
 
 }

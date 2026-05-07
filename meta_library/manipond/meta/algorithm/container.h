@@ -4,8 +4,6 @@
 
 #pragma once
 
-//算法 algorithm
+//容器 container
 //聚合头文件
-#include "algorithm/predicate.h"
-
-#include "algorithm/container.h"
+#include "container/to_variant_array.h"

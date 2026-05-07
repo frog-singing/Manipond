@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include "index_element.h"
+#include <manipond/meta/wrapper/element.h>
 #include <cstddef> //用于 std::size_t
 #include <utility> //用于 std::index_sequence
 
@@ -10,20 +12,11 @@
 //演化塘::元工具::列表
 namespace manipond::meta::list
 {
-	//包装器::带索引值 wrapper::indexed_value================================================================================
+	//包装器::带索引值 wrapper::indexed value================================================================================
 
 	//带索引值
 	template <std::size_t Index, auto Value>
-	struct indexed_value
-	{
-		static constexpr std::size_t index{ Index };
-
-		using type = decltype(Value);
-		using value_type = type;
-		static constexpr type value{ Value };
-		constexpr operator type() const noexcept { return value; }
-		constexpr type operator()() const noexcept { return value; }
-	};
+	struct indexed_value : index_element<Index>, value_element<Value> {};
 
 	//聚合带索引值
 	template <typename IndexSequence, auto... Value>
