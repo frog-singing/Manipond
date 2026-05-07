@@ -49,12 +49,12 @@ namespace manipond::meta::list
 		using value_table = poly_indexed_value<std::make_index_sequence<size>, Value...>;
 
 	public:
-		//下标访问元素
+		//下标访问元素，成员常量
 		template<std::size_t Index>
-			requires (Index < sizeof...(Value)) //不能用静态成员变量 size，因为此时 value_list 还没有实例化
+			requires (Index < sizeof...(Value)) //不能用静态成员常量 size，因为此时 value_list 还没有实例化
 		static constexpr auto element = decltype(resolve_value<Index>(value_table{}))::value;
 
-		//下标访问元素的函数版本
+		//下标访问元素，成员函数
 		template<std::size_t Index>
 		static constexpr auto get() noexcept { return element<Index>; }
 
@@ -131,23 +131,23 @@ namespace manipond::meta::list
 	//值列表的 get 函数重载，用于 tuple-like 访问
 	template<std::size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> const&) noexcept
+	constexpr decltype(auto) get(value_list<Value...> const&) noexcept
 	{
-		return manipond::meta::list::value_list<Value...>::template element<Index>;
+		return value_list<Value...>::template element<Index>;
 	}
 
 	template<std::size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> &) noexcept
+	constexpr decltype(auto) get(value_list<Value...> &) noexcept
 	{
-		return manipond::meta::list::value_list<Value...>::template element<Index>;
+		return value_list<Value...>::template element<Index>;
 	}
 
 	template<std::size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> &&) noexcept
+	constexpr decltype(auto) get(value_list<Value...> &&) noexcept
 	{
-		return manipond::meta::list::value_list<Value...>::template element<Index>;
+		return value_list<Value...>::template element<Index>;
 	}
 
 }
@@ -166,5 +166,27 @@ namespace std
 	{
 		using type = decltype(manipond::meta::list::value_list<Value...>::template element<Index>);
 	};
+
+	//值列表的 get 函数重载
+	template<size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...> const&) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
+
+	template<size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...>&) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
+
+	template<size_t Index, auto... Value>
+		requires (Index < sizeof...(Value))
+	constexpr decltype(auto) get(manipond::meta::list::value_list<Value...>&&) noexcept
+	{
+		return manipond::meta::list::value_list<Value...>::template element<Index>;
+	}
 
 }
