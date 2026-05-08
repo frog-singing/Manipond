@@ -14,9 +14,9 @@ namespace manipond::meta
 	template<typename Type>
 	struct type_element { using type = Type; };
 
-	//类型-值对
-	template<typename Type, auto Value>
-	struct type_value_pair : type_element<Type>
+	//值元素
+	template<auto Value>
+	struct value_element
 	{
 		using value_type = decltype(Value);
 		static constexpr value_type value{ Value };
@@ -24,8 +24,8 @@ namespace manipond::meta
 		constexpr value_type operator()() const noexcept { return value; }
 	};
 
-	//值元素
-	template<auto Value>
-	struct value_element : type_value_pair<decltype(Value), Value> {};
+	//类型-值对
+	template<typename Type, auto Value>
+	struct type_value_pair : type_element<Type>, value_element<Value> {};
 
 }

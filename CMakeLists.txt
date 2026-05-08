@@ -107,7 +107,7 @@ if(PROJECT_IS_TOP_LEVEL)
         # 链接到当前仓库的库
         target_link_libraries(${test_name} PRIVATE
             manipond::meta
-            anipond::exosuit_runtime
+            manipond::exosuit_runtime
         )
 
         add_test(NAME ${test_name} COMMAND ${test_name})
