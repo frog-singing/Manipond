@@ -28,9 +28,8 @@ namespace manipond::meta::container
 		}, std::forward<TupleType>(tuple));
 	}
 
-	template<valuewise::List TupleType>
-		requires TupleLike<TupleType>
-	static constexpr auto to_variant_array(TupleType&&)
+	template<typename TupleType>
+	static constexpr auto value_list_to_variant_array_impl()
 	{
 		using value_list = as_value_list<TupleType>;
 		using variant_type = typename value_list::template apply<type_extractor>::template apply<std::variant>;
@@ -38,6 +37,20 @@ namespace manipond::meta::container
 		return value_list::invoke([] <auto... Value> {
 			return std::array<variant_type, sizeof...(Value)>{ Value... };
 		});
+	}
+
+	template<valuewise::List TupleType>
+		requires TupleLike<TupleType>
+	static constexpr auto to_variant_array()
+	{
+		return value_list_to_variant_array_impl<TupleType>();
+	}
+
+	template<valuewise::List TupleType>
+		requires TupleLike<TupleType>
+	static constexpr auto to_variant_array(TupleType)
+	{
+		return value_list_to_variant_array_impl<TupleType>();
 	}
 
 }
