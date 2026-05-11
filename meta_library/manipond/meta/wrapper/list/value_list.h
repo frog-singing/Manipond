@@ -16,9 +16,6 @@
 
 namespace manipond::meta::list
 {
-	template<auto... Value>
-	struct value_list;
-
 	template<typename List>
 	struct value_list_trait;
 }
@@ -58,9 +55,17 @@ namespace manipond::meta::list
 		template<std::size_t Index>
 		static constexpr auto get() noexcept { return element<Index>; }
 
-		//值列表重包装
+		//重包装
 		template<template<auto...> typename Wrapper>
 		using apply = Wrapper<Value...>;
+
+		//变换
+		template<auto Mapping>
+		using transform = value_list<Mapping.template operator() < Value > ()...>;
+
+		//变换为类型
+		template<template<auto> typename Mapping>
+		using to_type = type_list<Mapping<Value>...>;
 
 		//调用可调用对象
 		template<typename Invocable>

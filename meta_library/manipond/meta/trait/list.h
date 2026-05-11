@@ -27,4 +27,7 @@ namespace manipond::meta
 	template<auto... Value>
 	using type_extractor = list::type_list<decltype(Value)...>;
 
+	template<auto Value>
+	using decl_type = decltype(Value);
+
 }

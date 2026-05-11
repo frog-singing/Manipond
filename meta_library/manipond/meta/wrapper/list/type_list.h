@@ -14,12 +14,8 @@
 
 namespace manipond::meta::list
 {
-	template<typename... Type>
-	struct type_list;
-
 	template<typename List>
 	struct type_list_trait;
-
 }
 
 
@@ -52,9 +48,17 @@ namespace manipond::meta::list
 			requires (Index < sizeof...(Type)) //不能用静态成员常量 size，因为此时 type_list 还没有实例化
 		using element = typename decltype(resolve_type<Index>(type_table{}))::type;
 
-		//类型列表重包装
+		//重包装
 		template<template<typename...> typename Wrapper>
 		using apply = Wrapper<Type...>;
+
+		//变换
+		template<template<typename> typename Mapping>
+		using transform = type_list<Mapping<Type>...>;
+
+		//变换为值
+		template<auto Mapping>
+		using to_value = value_list<Mapping.template operator() < Type > ()...>;
 
 		//调用可调用对象
 		template<typename Invocable>

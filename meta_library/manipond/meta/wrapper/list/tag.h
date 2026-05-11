@@ -5,6 +5,16 @@
 #pragma once
 
 
+namespace manipond::meta::list
+{
+	template<typename... Type>
+	struct type_list;
+
+	template<auto... Value>
+	struct value_list;
+}
+
+
 //演化塘::元工具::列表
 namespace manipond::meta::list
 {
