@@ -242,6 +242,7 @@ namespace manipond::meta::predicate::quantifier
 //演化塘::元工具::谓词
 namespace manipond::meta::predicate
 {
+	using quantifier::quantifier_tag;
 	using quantifier::Quantifier;
 
 	using quantifier::always_true;	// ⊤
