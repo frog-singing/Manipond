@@ -56,9 +56,15 @@ namespace manipond::meta::list
 		template<template<typename> typename Mapping>
 		using transform = type_list<Mapping<Type>...>;
 
+	private:
+		// MSVC 无法识别 operator() 调用后接 ...
+		template<auto Mapping, typename CurrentType>
+		static constexpr auto lambda_mapping_result = Mapping.template operator() < CurrentType > ();
+
+	public:
 		//变换为值
 		template<auto Mapping>
-		using to_value = value_list<Mapping.template operator() < Type > ()...>;
+		using to_value = value_list<lambda_mapping_result<Mapping, Type>...>;
 
 		//调用可调用对象
 		template<typename Invocable>

@@ -46,11 +46,16 @@ namespace manipond::meta::list
 		using value_table = poly_indexed_value<std::make_index_sequence<size>, Value...>;
 
 	public:
+		//下标访问元素类型
+		template<std::size_t Index>
+			requires (Index < sizeof...(Value)) //不能用静态成员常量 size，因为此时 value_list 还没有实例化
+		using element_type = typename decltype(resolve_value<Index>(value_table{}))::value_type;
+
 		//下标访问元素，成员常量
 		template<std::size_t Index>
 			requires (Index < sizeof...(Value)) //不能用静态成员常量 size，因为此时 value_list 还没有实例化
-		static constexpr auto element = decltype(resolve_value<Index>(value_table{}))::value;
-
+		static constexpr element_type<Index> element = decltype(resolve_value<Index>(value_table{}))::value;
+		
 		//下标访问元素，成员函数
 		template<std::size_t Index>
 		static constexpr auto get() noexcept { return element<Index>; }
@@ -59,9 +64,15 @@ namespace manipond::meta::list
 		template<template<auto...> typename Wrapper>
 		using apply = Wrapper<Value...>;
 
+	private:
+		// MSVC 无法识别 operator() 调用后接 ...
+		template<auto Mapping, auto CurrentValue>
+		static constexpr auto lambda_mapping_result = Mapping.template operator() < CurrentValue > ();
+
+	public:
 		//变换
 		template<auto Mapping>
-		using transform = value_list<Mapping.template operator() < Value > ()...>;
+		using transform = value_list<lambda_mapping_result<Mapping, Value>...>;
 
 		//变换为类型
 		template<template<auto> typename Mapping>
@@ -178,14 +189,14 @@ namespace manipond::meta::list
 	//值列表的 get 函数重载，用于 tuple-like 访问
 	template<std::size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(const value_list<Value...>&) noexcept
+	constexpr auto get(const value_list<Value...>&) noexcept
 	{
 		return value_list<Value...>::template element<Index>;
 	}
 
 	template<std::size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(const volatile value_list<Value...>&) noexcept
+	constexpr auto get(const volatile value_list<Value...>&) noexcept
 	{
 		return value_list<Value...>::template element<Index>;
 	}
@@ -210,14 +221,14 @@ namespace std
 	//值列表的 get 函数重载
 	template<size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(const manipond::meta::list::value_list<Value...>&) noexcept
+	constexpr auto get(const manipond::meta::list::value_list<Value...>&) noexcept
 	{
 		return manipond::meta::list::value_list<Value...>::template element<Index>;
 	}
 
 	template<size_t Index, auto... Value>
 		requires (Index < sizeof...(Value))
-	constexpr decltype(auto) get(const volatile manipond::meta::list::value_list<Value...>&) noexcept
+	constexpr auto get(const volatile manipond::meta::list::value_list<Value...>&) noexcept
 	{
 		return manipond::meta::list::value_list<Value...>::template element<Index>;
 	}
