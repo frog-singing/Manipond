@@ -4,8 +4,6 @@
 
 #pragma once
 
-//外装件 exosuit
+//适配 adaptation
 //聚合头文件
-#include "exosuit/adaptation.h"
-#include "exosuit/error.h"
-#include "exosuit/work_in_progress.h"
+#include "adaptation/cxx_standard.h"

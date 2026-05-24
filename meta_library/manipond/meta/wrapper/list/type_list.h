@@ -3,13 +3,16 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include <version> //用于 __cpp_pack_indexing (C++26)，C++20标准
+#include <manipond/exosuit/adaptation/cxx_standard.h>
+
 #include "tag.h"
 #include "indexed_type.h"
 #include <manipond/exosuit/error/dependent_false.h>
 #include <cstddef> //用于 std::size_t
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <concepts> //用于 std::derived_from，C++20标准
-#include <type_traits> //用于 std::remove_cvref_t, std::false_type, std::true_type
+#include <type_traits> //用于 std::remove_cvref_t (C++20), std::false_type, std::true_type
 
 
 namespace manipond::meta::list
@@ -38,6 +41,14 @@ namespace manipond::meta::list
 		//尾参数包列表
 		using tail_list = typename type_list_trait<type_list>::tail_list;
 
+#if defined(__cpp_pack_indexing) && MANIPOND_CXX_STANDARD >= MANIPOND_CXX_26
+		//C++26
+		//下标访问元素
+		template<std::size_t Index>
+			requires (Index < sizeof...(Type))
+		using element = Type...[Index];
+#else
+		//C++20
 	private:
 		//带索引类型表
 		using type_table = poly_indexed_type<std::make_index_sequence<size>, Type...>;
@@ -47,6 +58,7 @@ namespace manipond::meta::list
 		template<std::size_t Index>
 			requires (Index < sizeof...(Type)) //不能用静态成员常量 size，因为此时 type_list 还没有实例化
 		using element = typename decltype(resolve_type<Index>(type_table{}))::type;
+#endif
 
 		//重包装
 		template<template<typename...> typename Wrapper>

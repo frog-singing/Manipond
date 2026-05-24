@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 #pragma once
+#include <version> //用于 __cpp_pack_indexing (C++26)，C++20标准
+#include <manipond/exosuit/adaptation/cxx_standard.h>
+
 #include "tag.h"
 #include "indexed_value.h"
 #include <manipond/exosuit/error/dependent_false.h>
@@ -10,7 +13,7 @@
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <variant> //用于 std::monostate
 #include <concepts> //用于 std::derived_from，C++20标准
-#include <type_traits> //用于 std::remove_cvref_t, std::false_type, std::true_type, std::integral_constant
+#include <type_traits> //用于 std::remove_cvref_t (C++20), std::false_type, std::true_type, std::integral_constant
 #include <tuple> //用于 std::tuple_size, std::tuple_element
 
 
@@ -41,6 +44,19 @@ namespace manipond::meta::list
 		//尾参数包列表
 		using tail_list = typename value_list_trait<value_list>::tail_list;
 
+#if defined(__cpp_pack_indexing) && MANIPOND_CXX_STANDARD >= MANIPOND_CXX_26
+		//C++26
+		//下标访问元素类型
+		template<std::size_t Index>
+			requires (Index < sizeof...(Value))
+		using element_type = decltype(Value...[Index]);
+
+		//下标访问元素，成员常量
+		template<std::size_t Index>
+			requires (Index < sizeof...(Value))
+		static constexpr element_type<Index> element = Value...[Index];
+#else
+		//C++20
 	private:
 		//带索引值表
 		using value_table = poly_indexed_value<std::make_index_sequence<size>, Value...>;
@@ -55,7 +71,8 @@ namespace manipond::meta::list
 		template<std::size_t Index>
 			requires (Index < sizeof...(Value)) //不能用静态成员常量 size，因为此时 value_list 还没有实例化
 		static constexpr element_type<Index> element = decltype(resolve_value<Index>(value_table{}))::value;
-		
+#endif		
+
 		//下标访问元素，成员函数
 		template<std::size_t Index>
 		static constexpr auto get() noexcept { return element<Index>; }

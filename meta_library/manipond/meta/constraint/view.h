@@ -4,7 +4,7 @@
 
 #pragma once
 #include "container.h"
-#include <type_traits> //用于 std::is_trivially_copyable_v, std::remove_cvref_t
+#include <type_traits> //用于 std::is_trivially_copyable_v, std::remove_cvref_t (C++20)
 
 
 //演化塘::元工具
