@@ -6,9 +6,10 @@
 #include <ranges> //用于 std::ranges
 #include <type_traits> //用于 std::remove_cvref_t (C++20), std::remove_reference_t
 #include <cstddef> //用于 std::size_t
-#include <concepts> //用于 std::same_as，C++20标准
+#include <concepts> //用于 std::same_as, std::convertible_to，C++20标准
 #include <tuple> //用于 std::tuple_size, std::tuple_element
-#include <utility>
+#include <utility> //用于 std::forward
+
 
 //演化塘::元工具
 namespace manipond::meta
@@ -36,15 +37,15 @@ namespace manipond::meta
     concept empty_tuple = std::tuple_size<std::remove_cvref_t<Tuple>>::value == 0;
 
     template <typename Tuple>
-    concept has_tuple_element = requires(Tuple tuple)
-    {
+    concept has_tuple_element = requires {
         typename std::tuple_element<0, std::remove_cvref_t<Tuple>>::type;
     };
 
+    //为了配合 std::apply，锁定为 std::get，暂不支持成员函数 get 和 ADL get
     template <typename Tuple>
-    concept can_get_element = requires(Tuple tuple)
+    concept can_get_element = requires(Tuple&& tuple)
     {
-        std::get<0>(tuple);
+        std::get<0>(std::forward<Tuple>(tuple));
     };
 
     template <typename Tuple>
