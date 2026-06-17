@@ -28,7 +28,7 @@ namespace manipond::meta::list
 	//包装器::类型列表 wrapper::type list================================================================================
 
 	//类型列表
-	//如果要使用递归展开，则不要存储void类型，因为空类型列表的head是void类型
+	//如果要使用递归展开，则不要存储 void 类型，因为空类型列表的 head 是 void 类型
 	template<typename... Type>
 	struct type_list : type_list_tag
 	{

@@ -30,7 +30,7 @@ namespace manipond::meta::list
 	//包装器::值列表 wrapper::value list================================================================================
 
 	//值列表
-	//如果要使用递归展开，则不要存储std::monostate{}值，因为空值列表的head是std::monostate{}值
+	//如果要使用递归展开，则不要存储 std::monostate{} 值，因为空值列表的 head 是 std::monostate{} 值
 	template<auto... Value>
 	struct value_list : value_list_tag
 	{
