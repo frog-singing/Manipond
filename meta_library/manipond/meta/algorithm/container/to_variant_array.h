@@ -23,7 +23,7 @@ namespace manipond::meta::container
 	{
 		using variant_type = typename as_type_list<TupleType>::template apply<std::variant>;
 		
-		return std::apply([](auto&&... instance) {
+		return std::apply([] (auto&&... instance) {
 			return std::array<variant_type, sizeof...(instance)>{ std::forward<decltype(instance)>(instance)... };
 		}, std::forward<TupleType>(tuple));
 	}

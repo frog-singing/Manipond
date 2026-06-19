@@ -34,6 +34,7 @@ namespace manipond::meta::list
 	template<auto... Value>
 	struct value_list : value_list_tag
 	{
+		using type = value_list;
 		static constexpr std::size_t size{ sizeof...(Value) };
 		static constexpr bool empty{ !size };
 
@@ -81,8 +82,9 @@ namespace manipond::meta::list
 		template<template<auto...> typename Wrapper>
 		using apply = Wrapper<Value...>;
 
-	private:
+#if defined(_MSC_VER)
 		// MSVC 无法识别 operator() 调用后接 ...
+	private:
 		template<auto Mapping, auto CurrentValue>
 		static constexpr auto lambda_mapping_result = Mapping.template operator() < CurrentValue > ();
 
@@ -90,6 +92,11 @@ namespace manipond::meta::list
 		//变换
 		template<auto Mapping>
 		using transform = value_list<lambda_mapping_result<Mapping, Value>...>;
+#else
+		//变换
+		template<auto Mapping>
+		using transform = value_list<Mapping.template operator() < Value > ()...>;
+#endif
 
 		//变换为类型
 		template<template<auto> typename Mapping>

@@ -32,6 +32,7 @@ namespace manipond::meta::list
 	template<typename... Type>
 	struct type_list : type_list_tag
 	{
+		using type = type_list;
 		static constexpr std::size_t size{ sizeof...(Type) };
 		static constexpr bool empty{ !size };
 
@@ -68,8 +69,9 @@ namespace manipond::meta::list
 		template<template<typename> typename Mapping>
 		using transform = type_list<Mapping<Type>...>;
 
-	private:
+#if defined(_MSC_VER)
 		// MSVC 无法识别 operator() 调用后接 ...
+	private:
 		template<auto Mapping, typename CurrentType>
 		static constexpr auto lambda_mapping_result = Mapping.template operator() < CurrentType > ();
 
@@ -77,6 +79,11 @@ namespace manipond::meta::list
 		//变换为值
 		template<auto Mapping>
 		using to_value = value_list<lambda_mapping_result<Mapping, Type>...>;
+#else
+		//变换为值
+		template<auto Mapping>
+		using to_value = value_list<Mapping.template operator() < Type > ()...>;
+#endif
 
 		//调用可调用对象
 		template<typename Invocable>
