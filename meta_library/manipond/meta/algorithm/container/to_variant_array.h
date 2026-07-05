@@ -19,7 +19,7 @@ namespace manipond::meta::container
 
 	template<typewise::List TupleType>
 		requires TupleLike<TupleType>
-	static constexpr auto to_variant_array(TupleType&& tuple)
+	constexpr auto to_variant_array(TupleType&& tuple)
 	{
 		using variant_type = typename as_type_list<TupleType>::template apply<std::variant>;
 		
@@ -29,7 +29,7 @@ namespace manipond::meta::container
 	}
 
 	template<typename TupleType>
-	static constexpr auto value_list_to_variant_array_impl()
+	constexpr auto value_list_to_variant_array_impl()
 	{
 		using value_list = as_value_list<TupleType>;
 		using variant_type = typename value_list::template apply<type_extractor>::template apply<std::variant>;
@@ -41,14 +41,14 @@ namespace manipond::meta::container
 
 	template<valuewise::List TupleType>
 		requires TupleLike<TupleType>
-	static constexpr auto to_variant_array()
+	constexpr auto to_variant_array()
 	{
 		return value_list_to_variant_array_impl<TupleType>();
 	}
 
 	template<valuewise::List TupleType>
 		requires TupleLike<TupleType>
-	static constexpr auto to_variant_array(TupleType)
+	constexpr auto to_variant_array(TupleType)
 	{
 		return value_list_to_variant_array_impl<TupleType>();
 	}
