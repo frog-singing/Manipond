@@ -14,4 +14,7 @@ namespace manipond::exosuit
 	template<typename...>
 	inline constexpr bool dependent_false_v{ false };
 
+	template<auto...>
+	inline constexpr bool valuewise_dependent_false_v{ false };
+
 }
