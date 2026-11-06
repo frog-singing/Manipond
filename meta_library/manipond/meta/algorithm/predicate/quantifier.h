@@ -52,7 +52,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return (condition && ...);
+			return (... && condition);
 		}
 
 		struct solver
@@ -71,7 +71,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return (condition || ...);
+			return (... || condition);
 		}
 
 		struct solver
@@ -90,7 +90,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return !(condition || ...);
+			return !(... || condition);
 		}
 
 		struct solver
@@ -109,7 +109,7 @@ namespace manipond::meta::predicate::quantifier
 	{
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return !(condition && ...);
+			return !(... && condition);
 		}
 
 		struct solver
@@ -133,7 +133,7 @@ namespace manipond::meta::predicate::quantifier
 
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return (static_cast<std::size_t>(condition) + ...) == Target;
+			return (... + static_cast<std::size_t>(condition)) == Target;
 		}
 
 		struct solver
@@ -157,7 +157,7 @@ namespace manipond::meta::predicate::quantifier
 
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return (static_cast<std::size_t>(condition) + ...) <= Threshold;
+			return (... + static_cast<std::size_t>(condition)) <= Threshold;
 		}
 
 		struct solver
@@ -181,7 +181,7 @@ namespace manipond::meta::predicate::quantifier
 
 		static constexpr bool solve(constructible_to<bool> auto... condition)
 		{
-			return (static_cast<std::size_t>(condition) + ...) > Threshold;
+			return (... + static_cast<std::size_t>(condition)) > Threshold;
 		}
 
 		struct solver
