@@ -6,9 +6,9 @@
 #include <version> //用于 __cpp_pack_indexing (C++26)，C++20标准
 #include <manipond/exosuit/adaptation/cxx_standard.h>
 
+#include <manipond/exosuit/error/dependent_false.h>
 #include "tag.h"
 #include "indexed_type.h"
-#include <manipond/exosuit/error/dependent_false.h>
 #include <cstddef> //用于 std::size_t
 #include <utility> //用于 std::make_index_sequence, std::forward
 #include <concepts> //用于 std::derived_from，C++20标准
